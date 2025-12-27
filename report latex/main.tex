@@ -1,0 +1,163 @@
+%% * Copyright (c) toshunster, 2019
+%% *
+%% * All rights reserved.
+%% *
+%% * Redistribution and use in source and binary forms, with or without
+%% * modification, are permitted provided that the following conditions are met:
+%% *     * Redistributions of source code must retain the above copyright
+%% *       notice, this list of conditions and the following disclaimer.
+%% *     * Redistributions in binary form must reproduce the above copyright
+%% *       notice, this list of conditions and the following disclaimer in the
+%% *       documentation and/or other materials provided with the distribution.
+%% *     * Neither the name of the toshunster nor the
+%% *       names of its contributors may be used to endorse or promote products
+%% *       derived from this software without specific prior written permission.
+%% *
+%% * THIS SOFTWARE IS PROVIDED BY toshunster ''AS IS'' AND ANY
+%% * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+%% * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+%% * DISCLAIMED. IN NO EVENT SHALL toshunster BE LIABLE FOR ANY
+%% * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+%% * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+%% * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+%% * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+%% * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+%% * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+\documentclass[pdf, unicode, 12pt, a4paper,oneside,fleqn]{article}
+
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+
+\usepackage{styles/log-style}
+\lstset{
+    language=C,
+    basicstyle=\ttfamily,
+    columns=fullflexible,
+    breaklines=true,
+    literate={«}{{\guillemotleft}}1
+             {»}{{\guillemotright}}1
+             {„}{{\quotedblbase}}1
+             {“}{{\textquotedblleft}}1
+             {”}{{\textquotedblright}}1
+             {‹}{{\guilsinglleft}}1
+             {›}{{\guilsinglright}}1
+             {「}{{\textcjkleft}}1
+             {」}{{\textcjkright}}1
+             {—}{{\textemdash}}1
+             {–}{{\textendash}}1
+             {…}{{\textellipsis}}1
+             {а}{{\selectfont\char224}}1
+             {б}{{\selectfont\char225}}1
+             {в}{{\selectfont\char226}}1
+             {г}{{\selectfont\char227}}1
+             {д}{{\selectfont\char228}}1
+             {е}{{\selectfont\char229}}1
+             {ё}{{\"e}}1
+             {ж}{{\selectfont\char230}}1
+             {з}{{\selectfont\char231}}1
+             {и}{{\selectfont\char232}}1
+             {й}{{\selectfont\char233}}1
+             {к}{{\selectfont\char234}}1
+             {л}{{\selectfont\char235}}1
+             {м}{{\selectfont\char236}}1
+             {н}{{\selectfont\char237}}1
+             {о}{{\selectfont\char238}}1
+             {п}{{\selectfont\char239}}1
+             {р}{{\selectfont\char240}}1
+             {с}{{\selectfont\char241}}1
+             {т}{{\selectfont\char242}}1
+             {у}{{\selectfont\char243}}1
+             {ф}{{\selectfont\char244}}1
+             {х}{{\selectfont\char245}}1
+             {ц}{{\selectfont\char246}}1
+             {ч}{{\selectfont\char247}}1
+             {ш}{{\selectfont\char248}}1
+             {щ}{{\selectfont\char249}}1
+             {ъ}{{\selectfont\char250}}1
+             {ы}{{\selectfont\char251}}1
+             {ь}{{\selectfont\char252}}1
+             {э}{{\selectfont\char253}}1
+             {ю}{{\selectfont\char254}}1
+             {я}{{\selectfont\char255}}1
+             {А}{{\selectfont\char192}}1
+             {Б}{{\selectfont\char193}}1
+             {В}{{\selectfont\char194}}1
+             {Г}{{\selectfont\char195}}1
+             {Д}{{\selectfont\char196}}1
+             {Е}{{\selectfont\char197}}1
+             {Ё}{{\"E}}1
+             {Ж}{{\selectfont\char198}}1
+             {З}{{\selectfont\char199}}1
+             {И}{{\selectfont\char200}}1
+             {Й}{{\selectfont\char201}}1
+             {К}{{\selectfont\char202}}1
+             {Л}{{\selectfont\char203}}1
+             {М}{{\selectfont\char204}}1
+             {Н}{{\selectfont\char205}}1
+             {О}{{\selectfont\char206}}1
+             {П}{{\selectfont\char207}}1
+             {Р}{{\selectfont\char208}}1
+             {С}{{\selectfont\char209}}1
+             {Т}{{\selectfont\char210}}1
+             {У}{{\selectfont\char211}}1
+             {Ф}{{\selectfont\char212}}1
+             {Х}{{\selectfont\char213}}1
+             {Ц}{{\selectfont\char214}}1
+             {Ч}{{\selectfont\char215}}1
+             {Ш}{{\selectfont\char216}}1
+             {Щ}{{\selectfont\char217}}1
+             {Ъ}{{\selectfont\char218}}1
+             {Ы}{{\selectfont\char219}}1
+             {Ь}{{\selectfont\char220}}1
+             {Э}{{\selectfont\char221}}1
+             {Ю}{{\selectfont\char222}}1
+             {Я}{{\selectfont\char223}}1
+}
+
+
+
+\begin{document}
+
+\input{LR1/titlepage}
+\input{LR1/problem}
+\input{LR1/src}
+\input{LR1/thinks}
+
+\newpage
+\input{LR2/titlepage}
+\input{LR2/problem}
+\input{LR2/src}
+\input{LR2/thinks}
+
+\newpage
+\input{LR3/titlepage}
+\input{LR3/problem}
+\input{LR3/src}
+\input{LR3/thinks}
+
+\newpage
+\input{LR4/titlepage}
+\input{LR4/problem}
+\input{LR4/src}
+\input{LR4/thinks}
+
+\newpage
+\input{LR5/titlepage}
+\input{LR5/problem}
+\input{LR5/src}
+\input{LR5/thinks}
+
+\newpage
+\input{LR6/titlepage}
+\input{LR6/problem}
+\input{LR6/src}
+\input{LR6/thinks}
+
+\newpage
+\input{LR7/titlepage}
+\input{LR7/problem}
+\input{LR7/src}
+\input{LR7/thinks}
+
+\end{document}

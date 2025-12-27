@@ -1,0 +1,144 @@
+\section{Описание}
+Нужно разработать программу для стемминга полученных токенов. Реализуем ее в виде библиотеки и включим в утилиту полного пайплайна. \\ \\
+Стемминг -- процесс приведения слова к его основе или корневой форме (стему) путем отбрасывания словоизменительных и словообразовательных аффиксов. Стемминг позволяет группировать однокоренные слова, сокращая размер словаря и повышая полноту поиска за счет учета различных грамматических форм одного и того же слова.
+
+Итоговый стеммер реализован для русского языка на основе классического алгоритма Портера. Алгоритм является эвристическим и состоит из последовательности правил, применяемых к слову в определенном порядке. Правила опираются на понятие регионов слова:
+
+\begin{enumerate}
+    \item \textbf{RV} -- регион, начинающийся после первой гласной в слове
+    \item \textbf{R1} -- регион после первого сочетания согласная + гласная
+    \item \textbf{R2} -- регион после первого сочетания согласная + гласная внутри R1
+\end{enumerate}
+
+Регионы определяются для каждого слова, и удаление окончаний разрешено только в том случае, если окончание лежит внутри соответствующего региона. Это позволяет сохранять основу слова и не удалять значимые части.
+
+\pagebreak
+
+\section{Исходный код}
+Для стемминга и финальной очистки токенов разработаны две библиотеки, а также отдельные утилиты:
+
+\begin{enumerate}
+    \item \textbf{./stemmer.c  <in\_dir> <out\_dir>} -- реализует алгоритм стемминга для русского языка по методу Портера.
+    \item \textbf{./finalizer.c <in\_dir> <out\_dir>} -- удаляет однобуквенные слова (кроме цифр) из текста.
+\end{enumerate}
+
+\vspace{1 em}
+\noindent\textbf{Стемминг.} Библиотека \texttt{stemmer\_lib.c} последовательно применяет к слову ряд правил, разделенных на 9 шагов. Каждое правило проверяет наличие определенного окончания и удаляет его, если оно находится в допустимом регионе.
+
+\begin{enumerate}
+    \item \textbf{Определение регионов:} вычисляются RV, R1, R2.
+    \item \textbf{Шаг 1: Perfective gerund} -- удаляет окончания прошедшего времени деепричастий (\textit{ивши, ывши, ив, ыв, вши, в}).
+    \item \textbf{Шаг 2: Adjective} -- удаляет окончания прилагательных и причастий (\textit{ее, ие, ые, ое, ими, ыми, ей, ий, ...}).
+    \item \textbf{Шаг 3: Participle} -- удаляет окончания причастий (\textit{ивш, ывш, ующ, ем, нн, вш, ющ, щ}).
+    \item \textbf{Шаг 4: Reflexive} -- удаляет возвратные окончания (\textit{ся, сь}).
+    \item \textbf{Шаг 5: Verb} -- удаляет личные глагольные окончания (\textit{ила, ыла, ена, ейте, уйте, ...}).
+    \item \textbf{Шаг 6: Noun} -- удаляет падежные окончания существительных (\textit{а, ев, ов, ие, ье, е, иями, ями, ...}).
+    \item \textbf{Шаг 7: Superlative} -- удаляет превосходную степень (\textit{ейш, ейше}).
+    \item \textbf{Шаг 8: Undouble н} -- убирает удвоенную «н» в конце основы.
+    \item \textbf{Шаг 9: Soft sign} -- удаляет мягкий знак в конце слова.
+\end{enumerate}
+
+\begin{lstlisting}[language=C]
+static
+void russian_stemmer( wchar_t *word )
+{
+    if ( !is_russian_word( word ) )
+        return;
+    
+    if ( wcslen( word ) < 3 )
+        return;
+    
+    size_t r1, r2, rv;
+    find_regions( word, &r1, &r2, &rv );
+    size_t len = wcslen(word);
+    
+    // Шаг 1: Perfective gerund
+    if ( has_ending( word, L"ивши" ) ||
+         has_ending( word, L"ывши" ) || 
+         has_ending( word, L"ив" ) ||
+         has_ending( word, L"ыв" ))
+    {
+        if ( len - 2 >= rv )
+        {
+            remove_ending( word, L"ивши" );
+            remove_ending( word, L"ывши" );
+            remove_ending( word, L"ив" );
+            remove_ending( word, L"ыв" );
+        }
+    } else if ( has_ending( word, L"вши" ) ||
+                has_ending( word, L"в" ) )
+    {
+        if ( (len - 1 >= rv) &&
+             (has_ending( word, L"вши" ) || has_ending( word, L"в" )) )
+        {
+            remove_ending( word, L"вши" );
+            remove_ending( word, L"в" );
+        }
+    }
+    
+    // Шаг 2: Adjective
+    const wchar_t *adjective_endings[] = {
+        L"ее", L"ие", L"ые", L"ое", L"ими", L"ыми", L"ей", L"ий",
+        L"ый", L"ой", L"ем", L"им", L"ым", L"ом", L"его", L"ого",
+        L"ему", L"ому", L"их", L"ых", L"ую", L"юю", L"ая", L"яя",
+        L"ою", L"ею", NULL
+    };
+    
+    for ( int i = 0; adjective_endings[i] != NULL; i++ )
+    {
+        if ( has_ending( word, adjective_endings[ i ] ) )
+        {
+            if ( len - wcslen( adjective_endings[ i ] ) >= r1 )
+                remove_ending( word, adjective_endings[ i ] );
+
+            break;
+        }
+    }
+    
+    // Шаг 3: Participle
+    if ( has_ending( word, L"ивш" ) ||
+         has_ending( word, L"ывш" ) || 
+         has_ending( word, L"ующ" ) )
+    {
+        if ( len - 3 >= rv )
+        {
+            remove_ending( word, L"ивш" );
+            remove_ending( word, L"ывш" );
+            remove_ending( word, L"ующ" );
+        }
+    } else if ( has_ending( word, L"ем" ) ||
+                has_ending( word, L"нн" ) || 
+                has_ending( word, L"вш" ) ||
+                has_ending( word, L"ющ" ) || 
+                has_ending( word, L"щ" ) )
+    {
+        if ( len - 2 >= rv )
+        {
+            remove_ending( word, L"ем" );
+            remove_ending( word, L"нн" );
+            remove_ending( word, L"вш" );
+            remove_ending( word, L"ющ" );
+            remove_ending( word, L"щ" );
+        }
+    }
+    // ====================================
+    // other steps...
+\end{lstlisting}
+
+\vspace{2em}
+\noindent\textbf{Финальная подготовка токенов.} После применения стемминга все равно в списке токенов оказались токены, которые сократились до 1 символа. Для решения этой проблемы была написана небольшая библиотека \texttt{finalizer\_lib.c} реализующая функцию удаления однобуквенных слов из текста. Исключение составляют однобуквенные цифры, которые могут быть частью номеров или обозначений.
+
+\vspace{2em}
+\noindent\textbf{Результат стемминга.}
+\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black]
+Where Winds Meet: Обзор самой эпической игры года Где встречаются The Witcher 3, Genshin Impact, Assassins Creed и Ghost of Tsushima Игру «Там, где встречаются ветра» стоило бы назвать «Там, где встречаются тренды из всех игр сразу». В этом китайском чуде от Everstone Studio и NetEase Games можно разглядеть не только те проекты, которые я вынес в подзаголовок обзора, но и другие, включая Black Myth: Wukong и Sekiro: Shadows Die Twice. Но вот что удивительно — при этом в Where Winds Meet полно и своих фишек. Ну где ещё вы можете вступить во фракцию воинов-алкоголиков, сыграть в шахматы с лидером бандитского лагеря, кидаться медведями, драться с гусями, кататься на них верхом, а потом лечить гусей (нет, не от ПТСР, но было бы логично).
+\end{tcolorbox}
+
+\bigskip
+
+\begin{tcolorbox}[colback=green!5!white,colframe=green!75!black]
+where winds meet обзор эпическ игр год встреч the witcher 3 genshin impact assassins creed ghost of tsushima игр встреч ветр ст назв встреч тренд игр сраз китайск чуд everstone studio netease games разгляд те проект котор вынес подзаголовок обзор друг включ black myth wukong sekiro shadows die twice удивительн where winds meet полн св фишек может вступ фракц воин алкоголик сыгр шахмат лидер бандитск лагер кид медвед др гус кат верх леч гус нет птср логичн
+\end{tcolorbox}
+
+\pagebreak
+

@@ -1,0 +1,32 @@
+# Конфигурация базы данных MongoDB
+db:
+  connection_string: "mongodb://admin:password123@localhost:27017/"
+  documents_database: "documents_db"
+
+# Настройки состояния робота
+state:
+  state_dir: "crawler_state"
+
+# Логика работы краулера
+logic:
+  delay_between_requests: 5
+  max_urls_per_sitemap: 20000
+
+  url_transforms:
+  - sitemap_pattern: "https://stopgame.ru/sitemap/news_1.xml"
+    pattern: "^https://stopgame\\.ru/news/(.+)$"
+    replacement: "https://stopgame.ru/newsdata/\\1"
+
+  - sitemap_pattern: "https://stopgame.ru/sitemap/news_2.xml"
+    pattern: "^https://stopgame\\.ru/news/(.+)$"
+    replacement: "https://stopgame.ru/newsdata/\\1"
+
+# - sitemap_pattern: "https://another/sitemap.xml"
+#   pattern: "^https://another\\.website\\.com/change(.+)$"
+#   replacement: "https://another\\.website\\.com/change_me\\1"
+
+  sitemaps:
+    - "https://stopgame.ru/sitemap/reviews_1.xml"
+    - "https://www.playground.ru/sitemap/news/list.xml"
+    - "https://stopgame.ru/sitemap/news_1.xml"
+    - "https://stopgame.ru/sitemap/news_2.xml"
